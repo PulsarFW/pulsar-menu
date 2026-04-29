@@ -272,7 +272,7 @@ export default (props) => {
                 </MButton>
                 <img className={classes.branding} src={Logo} />
                 <div className={`${classes.menuHeader} drag-handle`}>
-                    {Boolean(menu.label) ? menu.label : 'SandboxRP'}
+                    {Boolean(menu.label) ? menu.label : 'Pulsar Framework'}
                 </div>
                 <div className={classes.buttons}>
                     {elements.length > 0 ? (
