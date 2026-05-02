@@ -1,6 +1,6 @@
 -- AddEventHandler('onResourceStart', function(resource)
 --     	if resource == GetCurrentResourceName() then
-Wait(1000)
+-- Wait(1000)
 --         exports["pulsar-chat"]:RegisterCommand('menu', function(source, args, rawCommand)
 --             TriggerClientEvent('Menu:Client:Test', source)
 --         end, {
