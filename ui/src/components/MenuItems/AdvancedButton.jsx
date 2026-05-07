@@ -1,42 +1,14 @@
 import React from 'react';
 import Nui from '../../util/Nui';
-import { Grid, Button } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-
-const useStyles = makeStyles((theme) => ({
-    div: {
-        border: `1px solid ${theme.palette.border.input}`,
-        borderLeft: `4px solid ${theme.palette.border.input}`,
-        background: theme.palette.secondary.dark,
-        color: theme.palette.text.main,
-        fontSize: 13,
-        height: 42,
-        width: '100%',
-        textAlign: 'center',
-        userSelect: 'none',
-        transition: 'background ease-in 0.15s',
-        marginBottom: 10,
-        borderRadius: 0,
-        '&:hover': {
-            background: theme.palette.secondary.main,
-        },
-    },
-    left: {
-        display: 'inline-block',
-        width: '50%',
-        textAlign: 'left',
-        paddingLeft: 10,
-    },
-    right: {
-        display: 'inline-block',
-        width: '50%',
-        textAlign: 'right',
-        paddingRight: 10,
-    },
-}));
+import { Button, Group } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
+import {
+    interactiveRowHoverStyles,
+    rowInteractiveStyle,
+} from '../../theme/menuAppearance';
 
 export default ({ data }) => {
-    const classes = useStyles();
+    const theme = useMantineTheme();
 
     const onClick = () => {
         Nui.send('FrontEndSound', { sound: 'SELECT' });
@@ -46,16 +18,38 @@ export default ({ data }) => {
     };
 
     return (
-        <Button className={classes.div} onClick={onClick}>
-            <Grid container>
-                <Grid item xs={2}>
+        <Button
+            fullWidth
+            unstyled
+            onClick={onClick}
+            style={{
+                ...rowInteractiveStyle(theme),
+                justifyContent: 'stretch',
+            }}
+            styles={{
+                ...interactiveRowHoverStyles(theme),
+            }}
+        >
+            <Group gap="sm" justify="space-between" wrap="nowrap" w="100%">
+                <span
+                    style={{
+                        flex: '0 0 18%',
+                        textAlign: 'left',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        color: theme.colors.pulsar[3],
+                        fontWeight: 600,
+                        fontSize: 12,
+                    }}
+                >
                     {data.options.secondaryLabel}
-                </Grid>
-                <Grid item xs={8}>
+                </span>
+                <span style={{ flex: 1, textAlign: 'center' }}>
                     {data.label}
-                </Grid>
-                <Grid item xs={2}></Grid>
-            </Grid>
+                </span>
+                <span style={{ flex: '0 0 18%' }} />
+            </Group>
         </Button>
     );
 };

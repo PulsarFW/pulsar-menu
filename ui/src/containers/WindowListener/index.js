@@ -6,8 +6,15 @@ import Nui from '../../util/Nui';
 export default ({ children }) => {
     const dispatch = useDispatch();
     const handleEvent = (event) => {
-        const { type, data } = event.data;
-        if (type != null) dispatch({ type, payload: { ...data } });
+        const payload = event.data;
+        if (payload == null || typeof payload !== 'object') return;
+        const { type, data } = payload;
+        if (type == null || type === '') return;
+        dispatch({
+            type,
+            payload:
+                data != null && typeof data === 'object' ? { ...data } : {},
+        });
     };
 
     const handleKeyEvent = (event) => {

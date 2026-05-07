@@ -1,32 +1,16 @@
 import React from 'react';
-import { Button } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Button } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 import { useDispatch } from 'react-redux';
 import Nui from '../../util/Nui';
-
-const useStyles = makeStyles(theme => ({
-    div: {
-        border: `1px solid ${theme.palette.border.input}`,
-        borderLeft: `4px solid ${theme.palette.error.main}`,
-        background: theme.palette.secondary.dark,
-        color: theme.palette.text.main,
-        fontSize: 13,
-        height: 42,
-        width: '100%',
-        textAlign: 'center',
-        userSelect: 'none',
-        transition: 'background ease-in 0.15s',
-        marginBottom: 10,
-        borderRadius: 0,
-        '&:hover': {
-            background: theme.palette.secondary.main,
-        },
-    },
-}));
+import {
+    interactiveRowHoverStyles,
+    rowInteractiveStyle,
+} from '../../theme/menuAppearance';
 
 export default ({ data }) => {
-    const classes = useStyles();
-	const dispatch = useDispatch();
+    const theme = useMantineTheme();
+    const dispatch = useDispatch();
 
     const onClick = () => {
         if (!data.options.disabled) {
@@ -42,7 +26,20 @@ export default ({ data }) => {
     };
 
     return (
-        <Button className={classes.div} onClick={onClick}>
+        <Button
+            fullWidth
+            unstyled
+            disabled={data.options.disabled}
+            onClick={onClick}
+            style={{
+                ...rowInteractiveStyle(theme),
+                opacity: data.options.disabled ? 0.5 : 1,
+                cursor: data.options.disabled ? 'default' : 'pointer',
+            }}
+            styles={{
+                ...interactiveRowHoverStyles(theme),
+            }}
+        >
             {data.label}
         </Button>
     );

@@ -1,162 +1,110 @@
 import React, { useState } from 'react';
-import { Grid, Fade, Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Button, Group, Modal, Box, ScrollArea } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 import Nui from '../../util/Nui';
-
-const useStyles = makeStyles(theme => ({
-    div: {
-        border: `1px solid ${theme.palette.border.input}`,
-        borderLeft: `4px solid ${theme.palette.border.input}`,
-        background: theme.palette.secondary.dark,
-        color: theme.palette.text.main,
-        fontSize: 13,
-        height: 42,
-        width: '100%',
-        textAlign: 'center',
-        userSelect: 'none',
-        transition: 'background ease-in 0.15s',
-        marginBottom: 10,
-        borderRadius: 0,
-        '&:hover': {
-            background: theme.palette.secondary.main,
-        },
-    },
-    preview: {
-        width: 60,
-        height: 25,
-        border: `2px solid ${theme.palette.text.main}`,
-        transition: 'background 0.15s',
-    },
-    colorButton: {
-        width: '100%',
-        display: 'block',
-        height: 42,
-        fontSize: 16,
-        padding: '0 10px',
-        fontWeight: 500,
-        textAlign: 'center',
-        textDecoration: 'none',
-        textShadow: 'none',
-        whiteSpace: 'nowrap',
-        verticalAlign: 'middle',
-        borderRadius: 3,
-        transition: '0.1s all linear',
-        userSelect: 'none',
-        marginBottom: 5,
-        border: `2px solid ${theme.palette.border.divider}`,
-        background: theme.palette.secondary.light,
-        color: theme.palette.text.main,
-        '&:hover': {
-            background: theme.palette.secondary.light,
-            filter: 'brightness(0.7)',
-            cursor: 'pointer',
-        },
-    },
-}));
+import {
+    interactiveRowHoverStyles,
+    modalRowHoverSx,
+    modalRowStyle,
+    rowInteractiveStyle,
+} from '../../theme/menuAppearance';
 
 export default ({ data }) => {
-    const classes = useStyles();
+    const theme = useMantineTheme();
     const [showList, setShowList] = useState(false);
     const [selectedColor, setSelectedColor] = useState(
         data.options.colors[data.options.current],
     );
 
-    const onClick = () => {
+    const toggle = () => {
         if (!data.options.disabled) {
-            setShowList(!showList);
+            setShowList((open) => !open);
         }
     };
 
-    const changeColor = index => {
+    const changeColor = (index) => {
         setSelectedColor(data.options.colors[index]);
-		setShowList(!showList);
+        setShowList(false);
         Nui.send('Selected', {
             id: data.id,
             data: { color: data.options.colors[index] },
         });
     };
 
-    const cssClass = data.options.disabled
-        ? `${classes.div} disabled`
-        : `${classes.div}${showList ? ' open' : ''}`;
-    const style = data.options.disabled ? { opacity: 0.5 } : {};
+    const previewBg = (color) =>
+        color.rgb != null
+            ? `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`
+            : color.hex;
+
+    const swatchSx = {
+        width: 54,
+        height: 28,
+        borderRadius: 8,
+        border: '2px solid rgba(255,255,255,0.2)',
+        flexShrink: 0,
+        boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.35)',
+    };
 
     return (
         <div>
-            <Button className={cssClass} style={style} onClick={onClick}>
-                <Grid
-                    container
-                    style={{
-                        alignItems: 'center',
-                        height: '100%',
-                    }}
-                >
-                    <Grid item xs={2}>
-                        <div
-                            className={classes.preview}
-                            style={{
-                                background:
-                                    selectedColor.rgb != null
-                                        ? `rgb(${selectedColor.rgb.r}, ${selectedColor.rgb.g}, ${selectedColor.rgb.b})`
-                                        : selectedColor.hex,
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={8}>
-                        <span style={{ textShadow: '2px 2px #000' }}>
-                            {selectedColor.label}
-                        </span>
-                    </Grid>
-                </Grid>
+            <Button
+                fullWidth
+                unstyled
+                onClick={toggle}
+                disabled={data.options.disabled}
+                style={{
+                    ...rowInteractiveStyle(theme),
+                    height: 'auto',
+                    minHeight: 46,
+                    opacity: data.options.disabled ? 0.5 : 1,
+                    cursor: data.options.disabled ? 'not-allowed' : 'pointer',
+                    justifyContent: 'stretch',
+                    padding: '8px 14px',
+                }}
+                styles={{
+                    ...interactiveRowHoverStyles(theme),
+                }}
+            >
+                <Group gap="md" wrap="nowrap" align="center" justify="flex-start">
+                    <Box style={{ ...swatchSx, background: previewBg(selectedColor) }} />
+                    <span style={{ fontWeight: 500, letterSpacing: '0.02em' }}>
+                        {selectedColor.label}
+                    </span>
+                </Group>
             </Button>
-            <Dialog fullWidth onClose={onClick} open={showList}>
-                <DialogTitle onClose={onClick}>
-                    Select Color
-                </DialogTitle>
-                <DialogContent dividers>
-                {data.options.colors.map(function(color, i) {
-                    return (
-                        <div
-                            className={classes.colorButton}
+
+            <Modal opened={showList} onClose={toggle} title="Select color">
+                <ScrollArea mah={380}>
+                    {data.options.colors.map((color, i) => (
+                        <Button
                             key={i}
-                            onClick={() => {
-                                changeColor(i);
+                            fullWidth
+                            unstyled
+                            type="button"
+                            disabled={data.options.disabled}
+                            onClick={() => changeColor(i)}
+                            style={{
+                                ...modalRowStyle(theme),
+                                justifyContent: 'flex-start',
+                                marginBottom: i === data.options.colors.length - 1 ? 0 : 8,
+                            }}
+                            styles={{
+                                root: modalRowHoverSx(theme),
                             }}
                         >
-                            <Grid
-                                container
-                                style={{
-                                    alignItems: 'center',
-                                    height: '100%',
-                                }}
-                            >
-                                <Grid item xs={2}>
-                                    <div
-                                        className={classes.preview}
-                                        style={{
-                                            background:
-                                                color.rgb != null
-                                                    ? `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`
-                                                    : color.hex,
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <span
-                                        style={{
-                                            textShadow: '2px 2px #000',
-                                        }}
-                                    >
-                                        {color.label}
-                                    </span>
-                                </Grid>
-                                <Grid item xs={2}></Grid>
-                            </Grid>
-                        </div>
-                    );
-                })}
-                </DialogContent>
-            </Dialog>
+                            <Group gap="md" wrap="nowrap" align="center" w="100%">
+                                <Box
+                                    style={{
+                                        ...swatchSx,
+                                        background: previewBg(color),
+                                    }}
+                                />
+                                <span>{color.label}</span>
+                            </Group>
+                        </Button>
+                    ))}
+                </ScrollArea>
+            </Modal>
         </div>
     );
 };

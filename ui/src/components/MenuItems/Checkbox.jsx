@@ -2,49 +2,18 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { Grid, Button } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Button, Group } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Nui from '../../util/Nui';
-
-const useStyles = makeStyles((theme) => ({
-    div: {
-        border: `1px solid ${theme.palette.border.input}`,
-        borderLeft: `4px solid ${theme.palette.border.input}`,
-        background: theme.palette.secondary.dark,
-        color: theme.palette.text.main,
-        fontSize: 13,
-        height: 42,
-        width: '100%',
-        textAlign: 'center',
-        userSelect: 'none',
-        transition: 'background ease-in 0.15s',
-        marginBottom: 10,
-        borderRadius: 0,
-        '&:hover': {
-            background: theme.palette.secondary.main,
-        },
-    },
-    left: {
-        display: 'inline-block',
-        width: '10%',
-        marginTop: 3,
-    },
-    icon: {
-        width: '0.75em',
-        height: '100%',
-        fontSize: '1.25rem',
-    },
-    right: {
-        width: '90%',
-        textAlign: 'center',
-        float: 'right',
-    },
-}));
+import {
+    interactiveRowHoverStyles,
+    rowInteractiveStyle,
+} from '../../theme/menuAppearance';
 
 export default ({ data }) => {
-    const classes = useStyles();
+    const theme = useMantineTheme();
     const [selected, setSelected] = useState(data.options.selected);
 
     const onClick = () => {
@@ -56,27 +25,44 @@ export default ({ data }) => {
         });
     };
 
+    const iconColor = selected
+        ? theme.colors.pulsar[4]
+        : 'rgba(255,255,255,0.45)';
+
     return (
-        <Button className={classes.div} onClick={onClick}>
-            <Grid container>
-                <Grid item xs={2}>
+        <Button
+            fullWidth
+            unstyled
+            onClick={onClick}
+            style={{
+                ...rowInteractiveStyle(theme),
+                justifyContent: 'stretch',
+            }}
+            styles={{
+                ...interactiveRowHoverStyles(theme),
+            }}
+        >
+            <Group gap="sm" justify="flex-start" wrap="nowrap" w="100%">
+                <span
+                    style={{
+                        flex: '0 0 10%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: iconColor,
+                    }}
+                >
                     {selected ? (
-                        <FontAwesomeIcon
-                            icon="square-check"
-                            className={classes.icon}
-                        />
+                        <FontAwesomeIcon icon="square-check" size="lg" />
                     ) : (
-                        <FontAwesomeIcon
-                            icon="square"
-                            className={classes.icon}
-                        />
+                        <FontAwesomeIcon icon="square" size="lg" />
                     )}
-                </Grid>
-                <Grid item xs={8}>
-                    <span>{data.label}</span>
-                </Grid>
-                <Grid item xs={2}></Grid>
-            </Grid>
+                </span>
+                <span style={{ flex: 1, textAlign: 'center' }}>
+                    {data.label}
+                </span>
+                <span style={{ flex: '0 0 10%' }} />
+            </Group>
         </Button>
     );
 };

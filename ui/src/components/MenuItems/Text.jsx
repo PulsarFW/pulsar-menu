@@ -2,22 +2,26 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { makeStyles } from '@mui/styles';
+import { useMantineTheme } from '@mantine/core';
 
 import { Sanitize } from '../../util/Parser';
 
-const useStyles = makeStyles(theme => ({
-    '@import':
-        'url("https://fonts.googleapis.com/css2?family=Inconsolata&display=swap")',
+const buildStyles = (theme) => ({
     defaultStyle: {
         textAlign: 'left',
         fontSize: 12,
         fontWeight: 'normal',
     },
     heading: {
-        fontSize: 22,
-        padding: '15px 0',
-        borderBottom: `1px solid ${theme.palette.primary.main}`,
+        fontSize: 20,
+        fontWeight: 700,
+        letterSpacing: '0.04em',
+        padding: '12px 0 14px',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: '0 100%',
+        backgroundSize: '68% 2px',
+        backgroundImage: `linear-gradient(90deg, ${theme.colors.pulsar[5]}ee, ${theme.colors.pulsar[6]}77, transparent)`,
+        color: 'rgba(255,255,255,0.94)',
     },
     textSmall: {
         fontSize: 8,
@@ -32,15 +36,20 @@ const useStyles = makeStyles(theme => ({
         fontSize: 24,
     },
     code: {
-        fontFamily: ['Inconsolata'],
+        fontFamily: 'Inconsolata, monospace',
     },
-    right: {
+    left: {
         textAlign: 'left',
     },
     center: {
         textAlign: 'center',
     },
+    /** Option key used by menu content for right alignment */
     right: {
+        textAlign: 'right',
+    },
+    /** Alias if content used older duplicate class name */
+    rightAlign: {
         textAlign: 'right',
     },
     bold: {
@@ -50,35 +59,35 @@ const useStyles = makeStyles(theme => ({
         padding: 15,
     },
     colorPrimary: {
-        color: theme.palette.primary.main,
+        color: theme.colors.pulsar[6],
     },
     colorError: {
-        color: theme.palette.error.main,
+        color: theme.colors.red[6],
     },
     colorWarning: {
-        color: theme.palette.warning.main,
+        color: theme.colors.yellow[5],
     },
     colorSuccess: {
-        color: theme.palette.success.light,
+        color: theme.colors.green[3],
     },
-}));
+});
 
-export default props => {
-    const classes = useStyles();
+export default (props) => {
+    const theme = useMantineTheme();
+    const styleMap = buildStyles(theme);
 
-    let style = '';
+    let merged = { ...styleMap.defaultStyle };
 
     if (
         props.data.options.classes != null &&
         props.data.options.classes.length > 0
-    )
-        props.data.options.classes.map(css => {
-            style += ` ${classes[css]}`;
+    ) {
+        props.data.options.classes.forEach((key) => {
+            if (styleMap[key]) {
+                merged = { ...merged, ...styleMap[key] };
+            }
         });
+    }
 
-    return (
-        <div className={`${classes.defaultStyle} ${style}`}>
-            {Sanitize(props.data.label)}
-        </div>
-    );
+    return <div style={merged}>{Sanitize(props.data.label)}</div>;
 };

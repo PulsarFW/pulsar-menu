@@ -1,100 +1,27 @@
 import React, { useState } from 'react';
-import { Slider as MSlider, Tooltip, Grid } from '@mui/material';
-import { withStyles, makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Grid, Slider, Box } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 
 import Nui from '../../util/Nui';
+import { fieldBlockStyle } from '../../theme/menuAppearance';
 
-const useStyles = makeStyles((theme) => ({
-    div: {
-        border: `1px solid ${theme.palette.border.input}`,
-        borderLeft: `4px solid ${theme.palette.border.input}`,
-        background: theme.palette.secondary.dark,
-        color: theme.palette.text.main,
-        fontSize: 13,
-        height: 84,
-        width: '100%',
-        textAlign: 'center',
-        userSelect: 'none',
-        transition: 'filter ease-in 0.15s',
-        padding: '10px 20px',
-        marginBottom: 10,
-    },
-    label: {
-        display: 'block',
-        width: '100%',
-    },
-    slider: {
-        display: 'block',
-        position: 'relative',
-        top: '25%',
-    },
-    saveContainer: {
-        textAlign: 'right',
-        color: '#38b58fab',
-        '&:hover': {
-            color: '#38b58f59',
-        },
-    },
-    icon: {
-        width: '0.75em',
-        height: '100%',
-        fontSize: '1.25rem',
-        float: 'right',
-    },
-}));
-
-function ValueLabelComponent(props) {
-    const { children, open, value } = props;
-
-    return (
-        <Tooltip open={open} enterTouchDelay={0} placement="top" title={value}>
-            {children}
-        </Tooltip>
-    );
-}
-
-const XSlider = withStyles((theme) => ({
-    color: theme.palette.primary.main,
-    height: 8,
-    '& .MuiSlider-thumb': {
-        height: 24,
-        width: 24,
-        backgroundColor: '#fff',
-        border: '2px solid currentColor',
-        marginTop: -8,
-        marginLeft: -12,
-        '&:focus, &:hover, &.Mui-active': {
-            boxShadow: 'inherit',
-        },
-    },
-    '& .MuiSlider-valueLabel': {
-        left: 'calc(-50% + 4px)',
-    },
-    '& .MuiSlider-track': {
-        height: 8,
-        borderRadius: 4,
-    },
-    '& .MuiSlider-rail': {
-        height: 8,
-        borderRadius: 4,
-    },
-}))(MSlider);
+const SAVE_HEX = '#3ecf9a';
 
 export default ({ data }) => {
-    const classes = useStyles();
+    const theme = useMantineTheme();
 
     const [currValue, setCurrValue] = useState(data.options.current);
-    const [savedValue, setSavedValue] = useState(currValue);
+    const [savedValue, setSavedValue] = useState(data.options.current);
 
-    const onChange = (event, newValue) => {
-        if (!data.disabled) {
+    const onChange = (newValue) => {
+        if (!data.options.disabled) {
             setCurrValue(newValue);
         }
     };
 
     const onSave = () => {
-        if (!data.disabled && currValue != savedValue) {
+        if (!data.options.disabled && currValue !== savedValue) {
             setSavedValue(currValue);
             Nui.send('FrontEndSound', { sound: 'SELECT' });
             Nui.send('Selected', {
@@ -104,47 +31,106 @@ export default ({ data }) => {
         }
     };
 
-    var cssClass = data.options.disabled
-        ? `${classes.div} disabled`
-        : classes.div;
-    var style = data.options.disabled ? { opacity: 0.5 } : {};
+    const style = data.options.disabled ? { opacity: 0.5 } : {};
+    const dirty = currValue !== savedValue && !data.options.disabled;
 
     return (
-        <div className={cssClass} style={style}>
-            <Grid container>
-                <Grid item xs={2}></Grid>
-                <Grid item xs={8}>
-                    <span>{data.label}</span>
-                </Grid>
-                <Grid
-                    item
-                    xs={2}
-                    className={classes.saveContainer}
-                    onClick={onSave}
-                >
-                    {currValue == savedValue ? null : (
-                        <FontAwesomeIcon
-                            icon="circle-check"
-                            className={classes.icon}
-                        />
-                    )}
-                </Grid>
-                <Grid item xs={12}>
-                    <XSlider
-                        valueLabelDisplay="auto"
-                        className={classes.slider}
-                        onChange={onChange}
-                        components={{
-                            ValueLabel: ValueLabelComponent,
+        <div
+            style={{
+                ...fieldBlockStyle(theme),
+                minHeight: 88,
+                paddingTop: 16,
+                paddingBottom: 16,
+                ...style,
+            }}
+        >
+            <Grid gutter="sm">
+                <Grid.Col span={2} />
+                <Grid.Col span={8}>
+                    <Box
+                        component="span"
+                        style={{
+                            fontWeight: 600,
+                            letterSpacing: '0.06em',
+                            fontSize: 11,
+                            textTransform: 'uppercase',
+                            color: 'rgba(255,255,255,0.48)',
                         }}
-                        defaultValue={0}
+                    >
+                        {data.label}
+                    </Box>
+                </Grid.Col>
+                <Grid.Col span={2} style={{ textAlign: 'right' }}>
+                    <Box
+                        onClick={dirty ? onSave : undefined}
+                        style={{
+                            color: dirty ? SAVE_HEX : 'transparent',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                            cursor: dirty ? 'pointer' : 'default',
+                            filter: dirty ? undefined : 'none',
+                            borderRadius: 8,
+                            padding: '2px 4px',
+                            transition: 'color 175ms ease, filter 175ms ease',
+                        }}
+                        onMouseEnter={(e) => {
+                            if (dirty) {
+                                e.currentTarget.style.color = SAVE_HEX + 'aa';
+                                e.currentTarget.style.filter = 'brightness(1.08)';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (dirty) {
+                                e.currentTarget.style.color = SAVE_HEX;
+                                e.currentTarget.style.filter = 'none';
+                            }
+                        }}
+                        role={dirty ? 'button' : undefined}
+                    >
+                        {dirty ? (
+                            <FontAwesomeIcon
+                                icon="circle-check"
+                                style={{
+                                    width: '0.85em',
+                                    fontSize: '1.35rem',
+                                }}
+                            />
+                        ) : null}
+                    </Box>
+                </Grid.Col>
+                <Grid.Col span={12}>
+                    <Slider
+                        color="pulsar"
+                        disabled={data.options.disabled}
+                        onChange={onChange}
                         value={currValue}
                         step={data.options.step != null ? data.options.step : 1}
                         min={data.options.min}
                         max={data.options.max}
-                        component="div"
+                        size="md"
+                        label={(v) => v}
+                        thumbSize={22}
+                        mt="md"
+                        styles={{
+                            root: { paddingTop: 4 },
+                            thumb: {
+                                borderWidth: 2,
+                                borderColor: theme.colors.pulsar[4],
+                                backgroundColor: '#ffffff',
+                                boxShadow: `0 2px 10px ${theme.colors.pulsar[6]}55`,
+                            },
+                            track: {
+                                height: 6,
+                                background: 'rgba(255,255,255,0.08)',
+                            },
+                            bar: {
+                                height: 6,
+                                background: `linear-gradient(90deg, ${theme.colors.pulsar[7]} 0%, ${theme.colors.pulsar[4]} 100%)`,
+                            },
+                        }}
                     />
-                </Grid>
+                </Grid.Col>
             </Grid>
         </div>
     );

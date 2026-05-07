@@ -1,0 +1,25 @@
+/*
+ * Mantine's styles.css sets :root { color-scheme: var(--mantine-color-scheme) } and ends up as
+ * "dark". In Chromium / FiveM NUI that often forces a SOLID dark page background regardless of
+ * transparent body — so players see full-screen black until the UA canvas matches the game behind.
+ *
+ * Import this bundle chunk immediately AFTER @mantine/core/styles.css (see containers/App/index.js).
+ */
+html,
+:root {
+    color-scheme: normal !important;
+}
+
+html,
+body,
+body[data-mantine-color-scheme],
+#app {
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0) !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+}
+
+#app {
+    pointer-events: none;
+}

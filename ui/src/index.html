@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html lang="en" style="overflow: hidden;">
     <head>
-		<link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+        <!-- Loaded before Mantine + bundle: guarantees transparent NUI viewport in FiveM -->
+        <style>
+            html,
+            :root {
+                color-scheme: normal !important;
+            }
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: rgba(0, 0, 0, 0) !important;
+                background-color: rgba(0, 0, 0, 0) !important;
+            }
+            #app {
+                background: rgba(0, 0, 0, 0) !important;
+                background-color: rgba(0, 0, 0, 0) !important;
+                pointer-events: none !important;
+            }
+        </style>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>AuthenticRP</title>
     </head>
-    <body style="background: transparent !important">
+    <body style="margin: 0; background: transparent !important; background-color: rgba(0,0,0,0) !important">
         <!-- Display a message if JS has been disabled on the browser. -->
         <noscript
             >If you're seeing this message, that means
             <strong>JavaScript has been disabled on your browser</strong>,
             please <strong>enable JS</strong> to make this app work.</noscript
         >
-        <div id="app" style="height: 100vh; width: 100vw;"></div>
+        <div id="app" style="height: 100vh; width: 100vw; pointer-events: none;"></div>
     </body>
 </html>

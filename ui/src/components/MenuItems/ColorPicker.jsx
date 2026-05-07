@@ -1,62 +1,24 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import {
-    Fade,
-    Button,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Button, Group, Modal } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 import { ChromePicker } from 'react-color';
 import Nui from '../../util/Nui';
-
-const useStyles = makeStyles((theme) => ({
-    div: {
-        width: '100%',
-        height: 82,
-        fontSize: 13,
-        fontWeight: 500,
-        textAlign: 'center',
-        textDecoration: 'none',
-        textShadow: 'none',
-        whiteSpace: 'nowrap',
-        display: 'inline-block',
-        verticalAlign: 'middle',
-        padding: '10px 20px',
-        userSelect: 'none',
-        transition: '0.1s all linear',
-        userSelect: 'none',
-        background: theme.palette.secondary.dark,
-        border: `1px solid ${theme.palette.border.input}`,
-        borderLeft: `4px solid ${theme.palette.border.input}`,
-        color: theme.palette.text.main,
-        marginBottom: 10,
-        '&:hover:not(.disabled)': {
-            background: theme.palette.secondary.main,
-        },
-    },
-    picker: {
-        background: `${theme.palette.secondary.dark} !important`,
-        boxShadow: 'none !important',
-        color: theme.palette.text.dark,
-    },
-}));
+import { rowInteractiveStyle } from '../../theme/menuAppearance';
 
 export default ({ data }) => {
-    const classes = useStyles();
+    const theme = useMantineTheme();
     const [showPicker, setShowPicker] = useState(false);
     const [currColor, setCurrColor] = useState(data.options.current);
     const [tColor, setTColor] = useState(currColor);
 
-    const onClick = () => {
+    const toggle = () => {
         if (!data.options.disabled) {
-            setShowPicker(!showPicker);
+            setShowPicker((o) => !o);
         }
     };
 
-    const onChange = (color, event) => {
+    const onChange = (color) => {
         if (!data.options.disabled) {
             setTColor(color.rgb);
         }
@@ -69,45 +31,91 @@ export default ({ data }) => {
                 id: data.id,
                 data: { color: tColor },
             });
-            onClick();
+            toggle();
         }
     };
 
-    const cssClass = data.options.disabled
-        ? `${classes.div} disabled`
-        : classes.div;
-    const style = data.options.disabled
-        ? {
-              opacity: 0.5,
-              background: `rgb(${currColor.r}, ${currColor.g}, ${currColor.b}`,
-          }
-        : { background: `rgb(${currColor.r}, ${currColor.g}, ${currColor.b}` };
+    const bg = `rgb(${currColor.r}, ${currColor.g}, ${currColor.b})`;
+    const baseRow = rowInteractiveStyle(theme);
 
     return (
         <div>
-            <Button className={cssClass} style={style} onClick={onClick}>
-                <span style={{ textShadow: '2px 2px #000' }}>
-                    Select Color : rgb({currColor.r}, {currColor.g},{' '}
-                    {currColor.b})
+            <Button
+                fullWidth
+                unstyled
+                onClick={toggle}
+                disabled={data.options.disabled}
+                style={{
+                    ...baseRow,
+                    minHeight: 84,
+                    justifyContent: 'center',
+                    padding: '14px 18px',
+                    background: bg,
+                    boxShadow:
+                        '0 4px 14px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.16), inset 0 0 0 1px rgba(0,0,0,0.2)',
+                    opacity: data.options.disabled ? 0.5 : 1,
+                    cursor: data.options.disabled ? 'not-allowed' : 'pointer',
+                }}
+                styles={{
+                    root: {
+                        '&:hover:not(:disabled)': {
+                            filter: 'brightness(1.07)',
+                            transform: 'translateY(-1px)',
+                        },
+                        '&:active:not(:disabled)': {
+                            transform: 'scale(0.996)',
+                        },
+                    },
+                }}
+            >
+                <span
+                    style={{
+                        fontWeight: 700,
+                        letterSpacing: '0.04em',
+                        textShadow:
+                            '0 2px 10px rgba(0,0,0,0.95), 0 0 24px rgba(0,0,0,0.6)',
+                        color: '#ffffff',
+                    }}
+                >
+                    Select color · rgb({currColor.r}, {currColor.g}, {currColor.b})
                 </span>
             </Button>
-            <Dialog fullWidth onClose={onClick} open={showPicker}>
-                <DialogTitle onClose={onClick}>Select Color</DialogTitle>
-                <DialogContent dividers>
-                    <ChromePicker
-                        color={tColor}
-                        disableAlpha
-                        onChange={onChange}
-                        width="100%"
-                        className={classes.picker}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button color="success" onClick={onSave}>
-                        Save Color
+            <Modal opened={showPicker} onClose={toggle} title="Select color">
+                <ChromePicker
+                    color={tColor}
+                    disableAlpha
+                    onChange={onChange}
+                    width="100%"
+                    styles={{
+                        default: {
+                            background: `${theme.colors.dark[8]} !important`,
+                            boxShadow: 'none !important',
+                            borderRadius: 12,
+                        },
+                    }}
+                />
+                <Group justify="flex-end" mt="md">
+                    <Button
+                        variant="gradient"
+                        gradient={{
+                            from: 'pulsar',
+                            to: '#0a0a0a',
+                            deg: 145,
+                        }}
+                        onClick={onSave}
+                        radius="md"
+                        style={{
+                            border: `1px solid ${theme.colors.pulsar[6]}88`,
+                            fontWeight: 600,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            fontSize: 12,
+                        }}
+                    >
+                        Save color
                     </Button>
-                </DialogActions>
-            </Dialog>
+                </Group>
+            </Modal>
         </div>
     );
 };
