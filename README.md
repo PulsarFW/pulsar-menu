@@ -6,17 +6,26 @@
 
 # PULSAR-MENU
 
-### Radial and context menu system
+### Generic dynamic menu — the shared floating panel other resources build on
 
 <br/>
 
 ![Lua](https://img.shields.io/badge/Lua_5.4-2C2D72?style=flat-square&logo=lua&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react)
 ![FiveM](https://img.shields.io/badge/FiveM-F40552?style=flat-square)
+![Svelte](https://img.shields.io/badge/Svelte_5-FF3E00?style=flat-square&logo=svelte&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-000000?style=flat-square&logo=bun&logoColor=white)
 
 <br/>
 
-[Overview](#overview) · [Dependencies](#dependencies)
+<sub>Enjoy the framework? A coffee helps keep active development, hardening, and support going.</sub>
+
+<a href="https://buymeacoffee.com/pulsarframework"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;width: 180px !important;" /></a>
+
+<br/>
+
+[Overview](#overview) · [Theming](#theming) · [Dependencies](#dependencies)
 
 </div>
 
@@ -24,19 +33,37 @@
 
 ## Overview
 
-Menu system for Pulsar Framework. Provides a shared radial and context menu API used across all framework resources — supports nested menus, color pickers, icons, and dynamic item visibility.
+A reusable dynamic-menu that other resources build on top of. Lua code calls `plsr.Menu:Create(...)` and then adds components such as: buttons, sliders, tickers, checkboxes, color pickers, inputs, and submenus to build a draggable floating panel
+
+> [!WARNING]
+> Public API used by several other resources (admin, customs, doorlock, fitment, dj, scenes, vehicles, dealerships) via `plsr.Menu:Create(...)`. Changing a message name or payload shape here can break every menu built through it!
+
+---
+
+## Theming
+
+Edit `ui/src/theme.css` for colors and fonts, and `ui/src/config.ts` for the fallback panel label, then rebuild:
+
+```
+cd ui
+bun install
+bun run build
+```
+
+Commit the rebuilt `ui/dist/` — that's what actually ships.
 
 ---
 
 ## Dependencies
 
-- `pulsar-core` — framework core
+- `pulsar_core` — framework core
+- `pulsar_pwnzor` — anti-cheat check loaded alongside every resource
 
 ---
 
 ## License
 
-This resource is proprietary software. All rights reserved by the Pulsar Framework team. Unauthorized distribution or resale is prohibited.
+This resource is free to use and modify under the [Pulsar Framework License](LICENSE.md). Redistribution is welcome as long as it stays free — selling this resource or any derivative of it requires written permission from the Pulsar Framework team.
 
 ---
 

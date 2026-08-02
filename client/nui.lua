@@ -1,8 +1,10 @@
+local config = load(LoadResourceFile(GetCurrentResourceName(), "config/shared.lua"))()
+
 RegisterNetEvent("UI:Client:Reset", function(force)
 	if force then
 		SendNUIMessage({
 			type = "APP_HIDE",
-			data = {},
+            data = {},
 		})
 		SetNuiFocus(false, false)
 
@@ -60,18 +62,17 @@ RegisterNUICallback("Selected", function(data, cb)
 end)
 
 local Sounds = {
-	["SELECT"] = { id = -1, sound = "SELECT", library = "HUD_FRONTEND_DEFAULT_SOUNDSET" },
-	["BACK"] = { id = -1, sound = "CANCEL", library = "HUD_FRONTEND_DEFAULT_SOUNDSET" },
-	["UPDOWN"] = { id = -1, sound = "NAV_UP_DOWN", library = "HUD_FRONTEND_DEFAULT_SOUNDSET" },
-	["DISABLED"] = { id = -1, sound = "ERROR", library = "HUD_FRONTEND_DEFAULT_SOUNDSET" },
+	["SELECT"] = { id = -1, sound = "SELECT", library = config.SoundSet },
+	["BACK"] = { id = -1, sound = "CANCEL", library = config.SoundSet },
+	["UPDOWN"] = { id = -1, sound = "NAV_UP_DOWN", library = config.SoundSet },
+	["DISABLED"] = { id = -1, sound = "ERROR", library = config.SoundSet },
 }
 
 RegisterNUICallback("FrontEndSound", function(data, cb)
 	cb("ok")
 
 	if Sounds[data.sound] ~= nil then
-		exports['pulsar-sounds']:UISoundsPlayFrontEnd(Sounds[data.sound].id, Sounds[data.sound].sound,
-			Sounds[data.sound].library)
+		plsr.UISounds.Play:FrontEnd(Sounds[data.sound].id, Sounds[data.sound].sound, Sounds[data.sound].library)
 	end
 end)
 
