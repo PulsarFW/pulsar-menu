@@ -2,6 +2,7 @@
 	import { onMount, type Component } from 'svelte';
 	import { appState, menuState, closeMenu } from './store/menu.svelte';
 	import { DEFAULT_MENU_LABEL } from '../config';
+	import { Nui } from './nui';
 	import Icon from './Icon.svelte';
 
 	import Button from './items/Button.svelte';
@@ -62,6 +63,9 @@
 		const onKey = (e: KeyboardEvent) => {
 			if (appState.hidden) return;
 			if (e.key === 'Escape') closeMenu();
+			else if (e.key === 'Shift' && (document.activeElement as HTMLElement | null)?.tagName !== 'TEXTAREA') {
+				Nui.toggleFocusLoss();
+			}
 		};
 		window.addEventListener('keyup', onKey);
 		return () => window.removeEventListener('keyup', onKey);
